@@ -1,0 +1,6 @@
+../MOTOR_DRIVER/MOTOR_DRIVER.c:10:6:MOTOR_driver_setupPWM	24	static
+../MOTOR_DRIVER/MOTOR_DRIVER.c:18:6:MOTOR_driver_setupENCODER	24	static
+../MOTOR_DRIVER/MOTOR_DRIVER.c:26:6:MOTOR_driver_rotary	24	static
+../MOTOR_DRIVER/MOTOR_DRIVER.c:36:6:MOTOR_driver_readPosAndSpeed	40	static
+../MOTOR_DRIVER/MOTOR_DRIVER.c:45:6:MOTOR_driver_reset	16	static
+../MOTOR_DRIVER/MOTOR_DRIVER.c:53:6:MOTOR_driver_setRatio	16	static
