@@ -46,7 +46,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define NamDHay 0
+//#define NamDHay 0
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -59,21 +59,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define ENC_A_J4_Pin GPIO_PIN_0
-#define ENC_A_J4_GPIO_Port GPIOA
-#define ENC_B_J4_Pin GPIO_PIN_1
-#define ENC_B_J4_GPIO_Port GPIOA
-#ifdef NamDHay
-#define PWM4_A_Pin GPIO_PIN_2
-#define PWM4_A_GPIO_Port GPIOA
-#define PWM4_B_Pin GPIO_PIN_3
-#define PWM4_B_GPIO_Port GPIOA
-#elif
 #define PWM4_A_Pin GPIO_PIN_5
 #define PWM4_A_GPIO_Port GPIOE
 #define PWM4_B_Pin GPIO_PIN_6
 #define PWM4_B_GPIO_Port GPIOE
-#endif
+#define ENC_A_J4_Pin GPIO_PIN_0
+#define ENC_A_J4_GPIO_Port GPIOA
+#define ENC_B_J4_Pin GPIO_PIN_1
+#define ENC_B_J4_GPIO_Port GPIOA
 #define PWM3_A_Pin GPIO_PIN_12
 #define PWM3_A_GPIO_Port GPIOD
 #define PWM3_B_Pin GPIO_PIN_13

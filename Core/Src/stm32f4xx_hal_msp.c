@@ -301,21 +301,17 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
 
   /* USER CODE END TIM9_MspPostInit 0 */
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOE_CLK_ENABLE();
     /**TIM9 GPIO Configuration
-    PA2     ------> TIM9_CH1
-    PA3     ------> TIM9_CH2
+    PE5     ------> TIM9_CH1
+    PE6     ------> TIM9_CH2
     */
     GPIO_InitStruct.Pin = PWM4_A_Pin|PWM4_B_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF3_TIM9;
-#ifdef NamDHay
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-#elif
     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-#endif
 
   /* USER CODE BEGIN TIM9_MspPostInit 1 */
 

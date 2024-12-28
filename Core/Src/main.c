@@ -89,11 +89,7 @@ MOTOR_DRIVER_t driver1 = {
 		.pos = 0,
 		.preSpeed = 0,
 		.prePos = 0,
-#ifdef NamDHay
 		.ratio = (float)308/15,
-#elif
-		.ratio = (float)33,
-#endif
 };
 MOTOR_DRIVER_t driver2 = {
 		.htimPWM = &htim4,
@@ -109,7 +105,7 @@ MOTOR_DRIVER_t driver2 = {
 		.prePos = 0,
 #ifdef NamDHay
 		.ratio = (float)308/15,
-#elif
+#else
 		.ratio = (float)33,
 #endif
 };
@@ -127,7 +123,7 @@ MOTOR_DRIVER_t driver3 = {
 		.prePos = 0,
 #ifdef NamDHay
 		.ratio = (float)308/15,
-#elif
+#else
 		.ratio = (float)33,
 #endif
 };
@@ -180,6 +176,7 @@ void UART_Handle(char *data) {
 		if (strstr(data, "qd")) {
 			sscanf(data, "qd[%f,%f,%f,%f,%f,%hhd", &setpoint1, &setpoint2,
 					&setpoint3, &setpoint4, &Tf, &MagState);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, !MagState);
 		}
 		if (strstr(data, "home")) {
 			IsHome = true;
@@ -188,10 +185,10 @@ void UART_Handle(char *data) {
 			HAL_NVIC_SystemReset();
 		}
 		if (strstr(data, "hut")) {
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
 		}
 		if (strstr(data, "nha")) {
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, 1);
 		}
 		flag_uart_rx = 0;
 		memset(data, 0, strlen(data));
@@ -311,18 +308,11 @@ void SetHome(void) {
 			MOTOR_setAngle(&motor1, 0);
 			MOTOR_setAngle(&motor2, 50);
 			MOTOR_setAngle(&motor3, -84);
-			MOTOR_setAngle(&motor4, -133);
+			MOTOR_setAngle(&motor4, 133);
 			if (fabs(MOTOR_getPos(&motor2) - 50)  < 1
 			 && fabs(MOTOR_getPos(&motor3) + 84)  < 1
-			 && fabs(MOTOR_getPos(&motor4) + 133) < 1) {
-				setHome234Flag = 0;
-				setHome1234Flag = 0;
-				setHomeOk = 1;
-				MOTOR_reset(&motor2);
-				MOTOR_reset(&motor3);
-				MOTOR_reset(&motor4);
-			}
-#elif
+			 && fabs(MOTOR_getPos(&motor4) - 133) < 1) {
+#else
 			MOTOR_setAngle(&motor1, 0);
 			MOTOR_setAngle(&motor2, 40);
 			MOTOR_setAngle(&motor3, -82);
@@ -330,6 +320,7 @@ void SetHome(void) {
 			if (fabs(MOTOR_getPos(&motor2) - 40)  < 1
 			 && fabs(MOTOR_getPos(&motor3) + 82)  < 1
 			 && fabs(MOTOR_getPos(&motor4) + 125) < 1) {
+#endif
 				setHome234Flag = 0;
 				setHome1234Flag = 0;
 				setHomeOk = 1;
@@ -337,7 +328,6 @@ void SetHome(void) {
 				MOTOR_reset(&motor3);
 				MOTOR_reset(&motor4);
 			}
-#endif
 		} else if (setHomeJ2 == 1 && setHomeJ3 == 1 && setHomeJ4 == 1) {
 			if (fabs(motor1.setPoint) <= 2) {
 				MOTOR_setAngle(&motor1, -20.0f);
@@ -378,7 +368,11 @@ void SetHome(void) {
 				MOTOR_setAngle(&motor2, -300);
 			}
 			if (setHomeJ4 == 0) {
+#ifdef NamDHay
+				MOTOR_setAngle(&motor4, -300);
+#else
 				MOTOR_setAngle(&motor4, 300);
+#endif
 			}
 		}
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7) == 0 && setHomeJ4 == 0) {
@@ -406,7 +400,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 				MOTOR_setAngle(&motor2, -300);
 			}
 			if (setHomeJ4 == 0) {
+#ifdef NamDHay
+				MOTOR_setAngle(&motor4, -300);
+#else
 				MOTOR_setAngle(&motor4, 300);
+#endif
 			}
 		}
 		if (GPIO_Pin == GPIO_PIN_7 && setHomeJ4 == 0) {
@@ -463,8 +461,8 @@ int main(void)
 
   MOTOR_setPIDPosition(&motor1, 5, 0, 0, 5);
   MOTOR_setPIDVelocity(&motor1, 30, 150, 0, 5);
-  MOTOR_setOutputRange(&motor1, -222, 222);
-  MOTOR_setWindupRange(&motor1, -200, 200);
+  MOTOR_setOutputRange(&motor1, -333, 333);
+  MOTOR_setWindupRange(&motor1, -300, 300);
   MOTOR_init(&motor1, &driver1, 1, GPIO_PIN_6, 500);
 
   MOTOR_setPIDPosition(&motor2, 5, 0, 0, 5);
@@ -475,14 +473,14 @@ int main(void)
 
   MOTOR_setPIDPosition(&motor3, 5, 0, 0, 5);
   MOTOR_setPIDVelocity(&motor3, 30, 150, 0, 5);
-  MOTOR_setOutputRange(&motor3, -555, 555);
-  MOTOR_setWindupRange(&motor3, -500, 500);
+  MOTOR_setOutputRange(&motor3, -666, 666);
+  MOTOR_setWindupRange(&motor3, -600, 600);
   MOTOR_init(&motor3, &driver3, 2, GPIO_PIN_11, 500);
 
   MOTOR_setPIDPosition(&motor4, 5, 0, 0, 5);
   MOTOR_setPIDVelocity(&motor4, 3, 50, 0, 5);
-  MOTOR_setOutputRange(&motor4, -222, 222);
-  MOTOR_setWindupRange(&motor4, -200, 200);
+  MOTOR_setOutputRange(&motor4, -666, 666);
+  MOTOR_setWindupRange(&motor4, -600, 600);
   MOTOR_init(&motor4, &driver4, 1, GPIO_PIN_7, 500);
 
   HAL_TIM_Base_Start_IT(&htim9);
@@ -510,6 +508,7 @@ int main(void)
 
 			pre_time = HAL_GetTick();
 		}
+//		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, MagState);
 
 //		This is DC test part
 //		MOTOR_driver_rotary(&driver1, -200);
@@ -1043,6 +1042,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
